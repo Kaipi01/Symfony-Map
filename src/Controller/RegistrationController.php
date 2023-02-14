@@ -19,7 +19,6 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, PersistenceManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher): Response
     {
-        //, PasswordAuthenticatedUserInterface $passwordAuthenticated
         $form = $this->createFormBuilder()
             ->add('username')
             ->add('email')
