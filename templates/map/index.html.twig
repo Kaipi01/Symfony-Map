@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if not is_granted('ROLE_USER') %}
+        <a class="btn btn-primary" href="../login">
+            Zaloguj się
+        </a>
+        <a class="btn btn-primary" href="../register">
+            Zarejestruj się
+        </a>
+    {% endif %}
+    {% if is_granted('ROLE_USER') %}
+        <a class="btn btn-primary" href="../logout">
+            Wyloguj się
+        </a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Stwórz nowy znacznik
+        </button>
+    {% endif %}
+    <h1 class="mt-5">Moja mapa</h1>
+    {% for message in app.flashes('sukces') %}
+		<p class="alert alert-success">
+			{{ message }}
+		</p>
+	{% endfor %}
+        <table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>ID</td>
+                        <td>Nazwa</td>
+                        <td>Szerokość</td>
+                        <td>Długość</td>
+                        {% if is_granted('ROLE_USER') %}
+                            <td>Działania</td>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for map in maps %}
+                        <tr>
+                            <td>{{ map.id }}</td>
+                            <td>
+                                <a class="map-name" target="_blank" href="https://pl.wikipedia.org/wiki/{{ map.name }}">{{ map.name }}</a>
+                            </td>
+                            <td class="map-latitude">{{ map.latitude }}</td>
+                            <td class="map-longitude">{{ map.longitude }}</td>
+                            {% if is_granted('ROLE_USER') %}
+                                <td>
+                                    <a href="delete/{{ map.id }}">
+                                        Usuń
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </table>
+    <div id="map" style="height: 600px"></div>
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="padding: 60px; z-index: 999">
+                {{ form(form) }}
+            </div>
+        </div>
+    </div>
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<script type="module">
+
+		const map = L.map('map').setView([52.31, 13.24], 5);
+        const marks = [];
+        const markNames = [...document.querySelectorAll('.map-name')];
+        const markLatitudes = [...document.querySelectorAll('.map-latitude')];
+        const markLongitudes = [...document.querySelectorAll('.map-longitude')];
+
+        for (let i = 0; i < markNames.length; i++) {
+            const mark = {
+                name: markNames[i].textContent,
+                latitude: markLatitudes[i].textContent,
+                longitude: markLongitudes[i].textContent
+            }
+            marks.push(mark);
+        }
+        generateMarks(marks);
+
+        function generateMarks(marks) {
+            marks.forEach(mark => {
+                L.marker([mark.latitude, mark.longitude], {alt: mark.name})
+                .addTo(map)
+                .bindPopup(mark.name)
+            });
+        }
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+	</script>
+{% endblock %}
