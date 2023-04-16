@@ -15,7 +15,23 @@
   const markers = [];
 
   $(document).ready(function () {
+    const addLikeChechbox = $("#add-like");
+    const addLikeLabel = $("#add-like ~ label");
     getMapData("/get-marks");
+    getLikes("/get-likes");
+
+    addLikeChechbox.click(function (e) {
+      const userID = addLikeChechbox.data("userid");
+
+      if (addLikeChechbox.is(":checked")) {
+        $.post(`/add-like/${userID}`);
+        addLikeChechbox.removeAttr("checked");
+      } else {
+        $.post(`/remove-like/${userID}`);
+      }
+
+      getLikes("/get-likes");
+    });
 
     $("#submit").click(function (e) {
       e.preventDefault();
@@ -50,6 +66,12 @@
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
+
+  function generateLikes(data) {
+    const likes = document.querySelector("#likes");
+    console.log(data);
+    likes.textContent = data[0].number;
+  }
 
   function generateContent(data) {
     const tableBody = document.querySelector(".table-body");
@@ -93,6 +115,15 @@
       },
       error: function () {
         alert("Error");
+      },
+    });
+  }
+
+  function getLikes(url) {
+    $.ajax({
+      url: url,
+      success: function (response) {
+        generateLikes(response);
       },
     });
   }

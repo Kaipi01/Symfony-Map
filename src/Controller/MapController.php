@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Map;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\MapRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
@@ -14,8 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class MapController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(): Response {
-        return $this->render('map/index.html.twig');
+    public function index(UserRepository $userRepository): Response {
+        $users = $userRepository->findAll();
+
+        return $this->render('map/index.html.twig', [
+            'users' => $users,
+        ]);
     }
 
     #[Route('/add-mark', name: 'add-mark')]

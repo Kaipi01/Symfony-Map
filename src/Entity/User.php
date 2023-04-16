@@ -24,6 +24,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column]
+    private ?bool $isLiked = false;
+
+    public function isLiked(): ?bool
+    {
+        return $this->isLiked;
+    }
+
+    public function setIsLiked(bool $isLiked): self
+    {
+        $this->isLiked = $isLiked;
+        return $this;
+    }
+
     /**
      * @var string The hashed password
      */
@@ -76,7 +90,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
-        
+
         if ($this->getEmail() == 'admin@example.com')
         {
             $roles[] = 'ROLE_ADMIN';
