@@ -1,0 +1,119 @@
+<script>
+  $(document).ready(function () {
+    $("#courses-list").load("./coursess.txt");
+    $("#courses-list").ajaxError(function(e, xhr) {
+      $(this).html(`Błąd: ${xhr.status} ${xhr.statusText}`)
+    })
+  });
+
+  // $("#button1").on("click", function () {
+  //   $.ajax({
+  //     url: "./courses.txt",
+  //     success: function (response) {
+  //       $("#courses-list").html(response);
+  //     },
+  //      error: function () {
+  //       alert('Error')
+  //     }
+  //   });
+  // });
+
+  // $("#button1").remove();
+
+  // $("#button1").on("click", function () {
+  //   $("#courses-list").load("./courses.txt", function () {
+  //     alert("Żądanie zakończone");
+  //   });
+  // });
+
+  // $(document).ready(function() {
+  //   $(".submit").click(function() {
+  //     const email = $("#email").val();
+  //     const name = $("#name").val();
+  //     const newsletter = $("#newsletter");
+  //     const url = `form.php?email=${email}&name=${name}`;
+  //     $('#newsletter').load(url)
+  //   })
+  // })
+
+  //showObject()
+  // function showObject() {
+  //   const request = new XMLHttpRequest();
+
+  //   request.onreadystatechange = function () {
+  //     if (request.readyState === 4 && request.status === 200) {
+  //       //const response = eval(`(${request.responseText})`)
+  //       const response = JSON.parse(request.responseText)
+  //       alert(response.tytul);
+  //       alert(response.cena);
+  //       alert(response.kategoria);
+  //     }
+  //   };
+  //   request.open("GET", "./kursy.txt", true);
+  //   request.send();
+  // };
+
+  // function validateForm() {
+  //   const email = document.querySelector("#email").value;
+  //   const name = document.querySelector("#name").value;
+  //   const newsletter = document.querySelector("#newsletter");
+  //   const url = "form.php";
+  //   const content = `email=${email}&name=${name}`;
+
+  //   if (email !== "" && name !== "") {
+  //     const request = new XMLHttpRequest();
+  //     request.onreadystatechange = function () {
+  //       if (request.readyState === 4 && request.status === 200) {
+  //         newsletter.innerHTML = request.responseText;
+  //       }
+  //     };
+  //     request.open("POST", url, true);
+  //     request.setRequestHeader(
+  //       "Content-Type",
+  //       "application/x-www-form-urlencoded"
+  //     );
+  //     request.send(content);
+  //   } else {
+  //     alert("Proszę podać odpowienie dane!");
+  //   }
+  // }
+
+  // function showContent(file, context) {
+  //   const request = new XMLHttpRequest();
+
+  //   request.onreadystatechange = function () {
+  //     const contentList = document.querySelector(context);
+
+  //     if (request.readyState === 4 && request.status === 200) {
+  //       contentList.innerHTML = request.responseText;
+  //     } else if (request.readyState === 4 && request.status !== 200) {
+  //       contentList.innerHTML = `Nie udało się załadować treści! Kod błędu: ${request.status} ${request.statusText}`;
+  //     }
+  //   };
+  //   request.open("GET", file, true);
+  //   request.send();
+  // }
+
+  // document.querySelector("#button1").onclick = function () {
+  //   showContent("./courses.php", "#courses-list");
+  // };
+
+  // document.querySelector(".submit").addEventListener("click", (e) => {
+  //   validateForm();
+  //   e.preventDefault();
+  // });
+
+  // const xmlDoc = new DOMParser().parseFromString(
+  //   request.responseText,
+  //   "text/xml"
+  // );
+  // console.log(xmlDoc)
+  // const response = [...xmlDoc.getElementsByTagName("title")];
+  // let list = "";
+
+  // response.forEach((element) => {
+  //   list += `<li>${element.innerHTML}</li>`;
+  // });
+
+  // contentList.innerHTML = list;
+</script>

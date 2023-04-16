@@ -1,0 +1,110 @@
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+  integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script
+  src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""
+></script>
+<script type="module">
+  const map = L.map("map").setView([45.31, 13.24], 4);
+  const submitBtn = document.querySelector("#map_Dodaj");
+  const markers = [];
+
+  $(document).ready(function () {
+    getMapData("/get-marks");
+
+    $("#submit").click(function (e) {
+      e.preventDefault();
+
+      const name = escape($("#name").val());
+      const latitude = escape($("#latitude").val());
+      const longitude = escape($("#longitude").val());
+
+      $.post("/add-mark", {
+        name: name,
+        latitude: latitude,
+        longitude: longitude,
+      });
+
+      getMapData("/get-marks");
+
+      $("#form").trigger("reset");
+    });
+  });
+
+  document.addEventListener("click", (e) => {
+    if (e.target.matches(".delete-mark")) {
+      markers.forEach((marker) => {
+        map.removeLayer(marker);
+      });
+      const id = e.target.dataset.id;
+      getMapData(`/delete/${id}`);
+    }
+  });
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  function generateContent(data) {
+    const tableBody = document.querySelector(".table-body");
+    tableBody.innerHTML = "";
+
+    console.log(data);
+
+    data.forEach((mark) => {
+      const { id, latitude, longitude, name } = mark;
+      const marker = new L.Marker([latitude, longitude], { alt: name });
+      map.addLayer(marker);
+      marker.bindPopup(name);
+      markers.push(marker);
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML += `
+            <td>${id}</td>
+            <td>
+                <a target="_blank" href="https://pl.wikipedia.org/wiki/${name}">${name}</a>
+            </td>
+            <td>${latitude}</td>
+            <td>${longitude}</td>
+            {% if is_granted('ROLE_USER') %}
+                <td>
+                    <button data-id="${id}" class="delete-mark btn btn-primary">
+                      Usuń
+                    </button>
+                </td>
+            {% endif %}                  
+      `;
+      tableBody.append(tr);
+    });
+  }
+
+  function getMapData(url) {
+    $.ajax({
+      url: url,
+      success: function (response) {
+        generateContent(response);
+      },
+      error: function () {
+        alert("Error");
+      },
+    });
+  }
+
+  function getStringAfterChar(string, endChar) {
+    let lastChars = string.slice(-1);
+    let i = 1;
+
+    while (string.slice((1 + i) * -1, i * -1) !== endChar) {
+      lastChars += string.slice((1 + i) * -1, i * -1);
+      i++;
+    }
+    return [...lastChars].reverse().join("");
+  }
+</script>

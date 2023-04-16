@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <courses>
+        <course>
+            <title>Kurs: JAVA</title>
+        </course>
+        <course>
+            <title>Kurs: C++</title>
+        </course>
+        <course>
+            <title>Kurs: Excel</title>
+        </course>
+        <course>
+            <title>Kurs: Joomla</title>
+        </course>
+        <course>
+            <title>Kurs: PHP</title>
+        </course>
+        <course>
+            <title>Kurs: jQuery</title>
+        </course>
+        <course>
+            <title>Kurs: AJAX</title>
+        </course>
+    </courses>
+</xml>

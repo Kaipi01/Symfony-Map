@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TestController!
+{% endblock %}
+
+{% block body %}
+	<h2>Lista Kursów</h2>
+	<button id="button1">Pokaż kursy</button>
+	<ul id="courses-list"></ul>
+
+	<div id="newsletter">
+		<h3>Newsletter</h3>
+		<p>Podaj swoje dane i kliknij na przycisk "Subskrybuj".</p>
+		<form action="form.php" method="GET">
+			<fieldset>
+				<label for="email">E-mail</label>
+				<input type="text" id="email" size="35" class="field" name="email" required />
+				<br>
+				<label for="name">Imię</label>
+				<input type="text" id="name" size="35" class="field" name="name" required />
+				<br>
+				<input type="button" value="Subskrybuj" class="submit" id="wyslij"/>
+				<p class="error"></p>
+			</fieldset>
+		</form>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	{% include 'test/script.html' %}
+{% endblock %}
