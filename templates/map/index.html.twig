@@ -3,6 +3,19 @@
 {% block body %}
 	<div class="row">
 		<div class="col-xl-4">
+			{% if is_granted('ROLE_USER') %}
+				<a class="btn btn-primary" href="/logout">
+					Wyloguj się
+				</a>
+				<p class="mt-2">Zalogowano jako: <b>{{ app.user.username }}</b></p>
+			{% else %}
+				<a class="btn btn-primary" href="/login">
+					Zaloguj się
+				</a>
+				<a class="btn btn-primary" href="/register">
+					Zarejestruj się
+				</a>
+			{% endif %}
 			<h1 class="mt-5">Moja mapa</h1>
 			<ul>
 				<li>Amsterdam: 52.22 | 4.54</li>
@@ -14,23 +27,10 @@
 				<li>Ateny: 38 | 23.43</li>
 				<li>Londyn: 51.30 | 0</li>
 			</ul>
-			{% if not is_granted('ROLE_USER') %}
-				<a class="btn btn-primary" href="/login">
-					Zaloguj się
-				</a>
-				<a class="btn btn-primary" href="/register">
-					Zarejestruj się
-				</a>
-			{% endif %}
-			{% if is_granted('ROLE_USER') %}
-				<a class="btn btn-primary" href="/logout">
-					Wyloguj się
-				</a>
+			{% if is_granted('ROLE_ADMIN') %}
 				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
 					Stwórz nowy znacznik
 				</button>
-				<p>Zalogowano jako:
-					{{ app.user.username }}</p>
 			{% endif %}
 			{% for message in app.flashes('sukces') %}
 				<p class="alert alert-success">
@@ -48,7 +48,7 @@
 					<td>Nazwa</td>
 					<td>Szerokość</td>
 					<td>Długość</td>
-					{% if is_granted('ROLE_USER') %}
+					{% if is_granted('ROLE_ADMIN') %}
 						<td>Działania</td>
 					{% endif %}
 				</tr>
@@ -56,25 +56,27 @@
 			<tbody class="table-body"></tbody>
 		</table>
 	</table>
-	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div
-				class="modal-content" style="padding: 60px; z-index: 999">
-				{# {{ form(form) }} #}
-				<form method="POST" action="/add-mark" id="form">
-					<label class="form-label" for="name">Name</label>
-					<input class="form-control" type="text" name="name" id="name">
+	{% if is_granted('ROLE_ADMIN') %}
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div
+					class="modal-content" style="padding: 60px; z-index: 999">
+					{# {{ form(form) }} #}
+					<form method="POST" action="/add-mark" id="form">
+						<label class="form-label" for="name">Name</label>
+						<input class="form-control" type="text" name="name" id="name">
 
-					<label class="form-label" for="latitude">Latitude</label>
-					<input class="form-control" type="number" name="latitude" id="latitude">
+						<label class="form-label" for="latitude">Latitude</label>
+						<input class="form-control" type="number" name="latitude" id="latitude">
 
-					<label class="form-label" for="longitude">Longitude</label>
-					<input class="form-control" type="number" name="longitude" id="longitude">
+						<label class="form-label" for="longitude">Longitude</label>
+						<input class="form-control" type="number" name="longitude" id="longitude">
 
-					<button class="btn btn-primary mt-2" type="submit" id="submit">Dodaj</button>
-				</form>
+						<button class="btn btn-primary mt-2" type="submit" id="submit">Dodaj</button>
+					</form>
+				</div>
 			</div>
 		</div>
-	</div>
+	{% endif %}
 	{% include 'map/map.html' %}
 {% endblock %}

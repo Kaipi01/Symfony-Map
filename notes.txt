@@ -1,0 +1,24 @@
+TODO:
+
+- Stwórz Encje Likes.php
+
+- z prywatnymi własnościami: id, number
+- dodaj do encji settery i gettery
+
+- Zaktualizuj schemat bazy danych
+
+- Stwórz LikesController.php
+
+- w LikesController.php stwórz metode getLikes()
+
+- Pobierz za pomocą ajax ilość like-ów i wstaw je pod mape
+
+- zauktualizuj encje user o własnościwość isLiked = false
+
+- Dodaj mozliwosc like-owania mapy tylko dla zalogowanych użytkowników
+
+- gdy autoryzowany użytkownik kliknie "Like" to zauktualizuj ilość like-ów w bazie o 1
+uzyj metody jquery post
+
+- po tym jak uzytkownik kliknie "Like" to zauktualizuj jego własnościwość isLiked na true
+

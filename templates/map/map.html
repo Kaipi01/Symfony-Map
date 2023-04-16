@@ -73,7 +73,7 @@
             </td>
             <td>${latitude}</td>
             <td>${longitude}</td>
-            {% if is_granted('ROLE_USER') %}
+            {% if is_granted('ROLE_ADMIN') %}
                 <td>
                     <button data-id="${id}" class="delete-mark btn btn-primary">
                       Usuń
@@ -95,16 +95,5 @@
         alert("Error");
       },
     });
-  }
-
-  function getStringAfterChar(string, endChar) {
-    let lastChars = string.slice(-1);
-    let i = 1;
-
-    while (string.slice((1 + i) * -1, i * -1) !== endChar) {
-      lastChars += string.slice((1 + i) * -1, i * -1);
-      i++;
-    }
-    return [...lastChars].reverse().join("");
   }
 </script>
