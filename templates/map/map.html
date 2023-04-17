@@ -136,7 +136,7 @@
       let replyTo = comment.replyToComment?.author.userName;
       let replyToID = comment.replyToComment?.id;
 
-      article.className = `${replyTo ? "ms-auto w-75" : ""}`;
+      //article.className = `${replyTo ? "ms-auto w-75" : ""}`;
       article.id = `comment${comment.id}`;
 
       if (userID == comment.author.id) {
@@ -149,7 +149,7 @@
       }
 
       article.innerHTML = `
-        <div class="border border-primary border-2 p-4 rounded mt-4">
+        <div class="border border-primary border-2 p-4 rounded mt-4 ${replyTo ? "ms-5" : ""}">
           <div class="d-flex gap-3">
             <h3 class="fs-5">${userName}${
         removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""
