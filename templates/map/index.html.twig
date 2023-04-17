@@ -30,7 +30,7 @@
 				<li>Londyn: 51.30 | 0</li>
 			</ul>
 			{% if is_granted('ROLE_ADMIN') %}
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-mark-form">
 					Stwórz nowy znacznik
 				</button>
 			{% endif %}
@@ -48,7 +48,6 @@
 						{% for user in users %}
 
 							{% if app.user.username == user.userName %}
-
 								<input type="checkbox" data-userid="{{ user.id }}" class="btn-check" id="add-like" autocomplete="off" {{ user.isLiked ? 'checked' }}>
 
 							{% endif %}
@@ -79,25 +78,56 @@
 			<tbody class="table-body"></tbody>
 		</table>
 	</table>
-	{% if is_granted('ROLE_ADMIN') %}
-		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content" style="padding: 60px; z-index: 999">
-					<form method="POST" action="/add-mark" id="form">
-						<label class="form-label" for="name">Name</label>
-						<input class="form-control" type="text" name="name" id="name">
+	<div id="comments">
+		<h2>Komentarze:</h2>
 
-						<label class="form-label" for="latitude">Latitude</label>
-						<input class="form-control" type="number" name="latitude" id="latitude">
+		{% if is_granted('ROLE_USER') %}
+			<p class="comments-success-alert alert alert-success d-none" role="alert">
+				Komentarz został dodany!
+			</p>
+			<p class="comments-fail-alert alert alert-danger d-none" role="alert">
+				Już dodałeś swój komentarz!
+			</p>
 
-						<label class="form-label" for="longitude">Longitude</label>
-						<input class="form-control" type="number" name="longitude" id="longitude">
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-comment-form">
+				Dodaj komentarz
+			</button>
 
-						<button class="btn btn-primary mt-2" type="submit" id="submit">Dodaj</button>
-					</form>
+			<div class="modal fade" id="add-comment-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" style="padding: 60px; z-index: 999">
+						<form method="POST" id="form-comment">
+
+							<label class="form-label fs-5 mb-2" for="content">Treść:</label>
+							<textarea id="content" class="form-control" name="content" required></textarea>
+
+							<button class="btn btn-primary mt-2" type="submit" id="submit-comment">Dodaj</button>
+						</form>
+					</div>
 				</div>
 			</div>
-		</div>
-	{% endif %}
+		{% endif %}
+
+		{% if is_granted('ROLE_ADMIN') %}
+			<div class="modal fade" id="add-mark-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content" style="padding: 60px; z-index: 999">
+						<form method="POST" id="form">
+							<label class="form-label" for="name">Nazwa</label>
+							<input class="form-control" type="text" name="name" id="name" required>
+
+							<label class="form-label" for="latitude">Szerokość</label>
+							<input class="form-control" type="number" name="latitude" id="latitude" required>
+
+							<label class="form-label" for="longitude">Długość</label>
+							<input class="form-control" type="number" name="longitude" id="longitude" required>
+
+							<button class="btn btn-primary mt-2" type="submit" id="submit">Dodaj</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
 	{% include 'map/map.html' %}
 {% endblock %}

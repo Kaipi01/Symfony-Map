@@ -27,7 +27,7 @@ class MapController extends AbstractController
     public function add(
         Request $request,
         PersistenceManagerRegistry $doctrine
-    ): void {
+    ): Response {
 
         if ($request->isXmlHttpRequest() && $request->isMethod('POST'))
         {
@@ -41,6 +41,7 @@ class MapController extends AbstractController
             $em->persist($map);
             $em->flush();
         }  
+        return new Response();
     }
 
     #[Route('/get-marks', name: 'get-marks')]

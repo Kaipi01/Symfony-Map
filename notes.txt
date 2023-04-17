@@ -22,3 +22,7 @@ uzyj metody jquery post
 
 - po tym jak uzytkownik kliknie "Like" to zauktualizuj jego własnościwość isLiked na true
 
+
+
+
+

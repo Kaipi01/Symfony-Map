@@ -13,16 +13,42 @@
   const map = L.map("map").setView([45.31, 13.24], 4);
   const submitBtn = document.querySelector("#map_Dodaj");
   const markers = [];
+  const addLikeChechbox = $("#add-like");
+  const addLikeLabel = $("#add-like ~ label");
+  const userID = addLikeChechbox.data("userid");
 
   $(document).ready(function () {
-    const addLikeChechbox = $("#add-like");
-    const addLikeLabel = $("#add-like ~ label");
     getMapData("/get-marks");
     getLikes("/get-likes");
+    getComments("/get-comments");
+
+    $("#submit-comment").click(function (e) {
+      e.preventDefault();
+      const content = $("#content").val();
+
+      if (content !== "") {
+        const userComment = document.querySelector("#user-comment");
+
+        if (userComment) {
+          showAlert($(".comments-fail-alert"));
+        } else {
+          $.ajax({
+            type: "POST",
+            url: `/add-comment/${userID}`,
+            data: { content: content },
+            success: () => {
+              showAlert($(".comments-success-alert"));
+              getComments("/get-comments");
+            },
+            error: (err) => console.error(err),
+          });
+        }
+
+        $("#form-comment").trigger("reset");
+      }
+    });
 
     addLikeChechbox.click(function (e) {
-      const userID = addLikeChechbox.data("userid");
-
       if (addLikeChechbox.is(":checked")) {
         $.post(`/add-like/${userID}`);
         addLikeChechbox.removeAttr("checked");
@@ -67,9 +93,59 @@
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
 
+  function generateComments(data) {
+    const commentsSection = document.querySelector("#comments");
+    const articles = commentsSection.querySelectorAll("article");
+    let userCommentID = "";
+    console.log("Komentarze: ", data);
+
+    if (articles) {
+      articles.forEach((article) => article.remove());
+    }
+
+    data.forEach((comment) => {
+      const article = document.createElement("article");
+      const userName = comment.author.userName;
+      const date =
+        comment.createdAt.slice(0, 10) +
+        " | " +
+        comment.createdAt.slice(11, 16);
+      let removeCommentBtn = "";
+      let replyBtn = `<button id="reply-comment${comment.id}" class="ms-auto btn btn-primary">odpowiedz</button>`;
+
+      article.className = "border border-primary border-2 p-4 rounded mt-4";
+
+      if (userID == comment.author.id) {
+        article.id = "user-comment";
+        replyBtn = "";
+        userCommentID = comment.id;
+        removeCommentBtn =
+          '<button id="remove-comment" class="ms-auto btn btn-primary">usuń komentarz</button>';
+      }
+
+      article.innerHTML = `
+        <div class="d-flex gap-3">
+          <h3 class="fs-5">${userName}${
+        removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""
+      }</h3>
+          <time>${date}</time>
+          ${replyBtn}
+          ${removeCommentBtn}
+        </div>
+        <p>${comment.content}</p>
+      `;
+      commentsSection.append(article);
+    });
+
+    $("#remove-comment").click(function () {
+      $.post(`/remove-comment/${userCommentID}`);
+      getComments("/get-comments");
+    });
+  }
+
   function generateLikes(data) {
     const likes = document.querySelector("#likes");
-    console.log(data);
+    console.log("Polubienia: ", data);
     likes.textContent = data[0].number;
   }
 
@@ -77,7 +153,7 @@
     const tableBody = document.querySelector(".table-body");
     tableBody.innerHTML = "";
 
-    console.log(data);
+    console.log("Znaczniki: ", data);
 
     data.forEach((mark) => {
       const { id, latitude, longitude, name } = mark;
@@ -126,5 +202,22 @@
         generateLikes(response);
       },
     });
+  }
+
+  function getComments(url) {
+    $.ajax({
+      url: url,
+      success: function (response) {
+        generateComments(JSON.parse(response));
+      },
+    });
+  }
+
+  function showAlert(alert) {
+    alert.removeClass("d-none");
+
+    setTimeout(function () {
+      alert.addClass("d-none");
+    }, 4000);
   }
 </script>

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LikesController extends AbstractController
@@ -25,7 +26,7 @@ class LikesController extends AbstractController
         User $user,
         Request $request,
         PersistenceManagerRegistry $doctrine
-    ): void
+    ): Response
     {
         if ($request->isXmlHttpRequest() && $request->isMethod('POST'))
         {
@@ -38,7 +39,8 @@ class LikesController extends AbstractController
 
             $em->persist($likes);
             $em->flush();
-        } 
+        }
+        return new Response();
     }   
 
     #[Route('/remove-like/{id}', name: 'remove-like')]
@@ -46,7 +48,7 @@ class LikesController extends AbstractController
         User $user,
         Request $request,
         PersistenceManagerRegistry $doctrine
-    ): void
+    ): Response
     {
         if ($request->isXmlHttpRequest() && $request->isMethod('POST'))
         {
@@ -60,5 +62,6 @@ class LikesController extends AbstractController
             $em->persist($likes);
             $em->flush();
         } 
+        return new Response();
     }  
 }
