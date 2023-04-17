@@ -21,14 +21,12 @@ class CommentController extends AbstractController
         SerializerInterface $serializer
     ): JsonResponse {
         $comments = $commentRepository->findAll();
-        //return $this->json($comments);
 
         $json = $serializer->serialize(
             $comments,
             'json',
             ['groups' => ['user', 'comment']]
         );
-        //return $this->json($comments);
         return $this->json($json);
     }
 

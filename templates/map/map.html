@@ -25,7 +25,8 @@
     $("#submit-comment").click(function (e) {
       e.preventDefault();
       const content = $("#content").val();
-      const replyToID = document.querySelector('#form-comment').dataset.commentid
+      const replyToID =
+        document.querySelector("#form-comment").dataset.commentid;
       console.log(replyToID);
 
       if (content !== "") {
@@ -34,7 +35,6 @@
         if (userComment) {
           showAlert($(".comments-fail-alert"));
         } else {
-
           $.ajax({
             type: "POST",
             url: `/add-comment/${userID}`,
@@ -140,9 +140,7 @@
       article.innerHTML = `
         <div class="border border-primary border-2 p-4 rounded mt-4">
           <div class="d-flex gap-3">
-            <h3 class="fs-5">${userName}${
-        removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""
-      }</h3>
+            <h3 class="fs-5">${userName}${removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""}</h3>
             <time>${date}</time>
             ${replyBtn}
             ${removeCommentBtn}
@@ -168,16 +166,17 @@
       getComments("/get-comments");
     });
 
-    document
-      .querySelectorAll(".reply-comment-button")
-      .forEach((btn) => btn.addEventListener("click", (e) => {
+    document.querySelectorAll(".reply-comment-button").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
         $("#form-comment").attr("data-commentid", e.target.id.slice(13));
-      }));
+      })
+    );
 
-    document.querySelector("#add-comment-noreply")
-      .addEventListener('click', function() {
-      $("#form-comment").removeAttr("data-commentid")
-    })
+    document
+      .querySelector("#add-comment-noreply")
+      .addEventListener("click", function () {
+        $("#form-comment").removeAttr("data-commentid");
+      });
   }
 
   function generateLikes(data) {
