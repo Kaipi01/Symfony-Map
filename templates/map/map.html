@@ -17,80 +17,27 @@
   const addLikeLabel = $("#add-like ~ label");
   const userID = addLikeChechbox.data("userid");
 
-  $(document).ready(function () {
-    getMapData("/get-marks");
-    getLikes("/get-likes");
-    getComments("/get-comments");
+  getMapData("/get-marks");
+  getLikes("/get-likes");
+  getComments("/get-comments");
 
-    $("#submit-comment").click(function (e) {
-      e.preventDefault();
-      const content = $("#content").val();
-      const replyToID =
-        document.querySelector("#form-comment").dataset.commentid;
-      console.log(replyToID);
+  $("#submit-comment").click(function (e) {
+    e.preventDefault();
+    addComment()
+  });
 
-      if (content !== "") {
-        const userComment = document.querySelector('[data-commentuser="true"]');
+  addLikeChechbox.click(function () {
+    addRemoveLike()
+  });
 
-        if (userComment) {
-          showAlert($(".comments-fail-alert"));
-        } else {
-          $.ajax({
-            type: "POST",
-            url: `/add-comment/${userID}`,
-            data: {
-              content: content,
-              replyToComment: replyToID ? parseInt(replyToID) : null,
-            },
-            success: () => {
-              showAlert($(".comments-success-alert"));
-              getComments("/get-comments");
-            },
-            error: (err) => console.error(err),
-          });
-        }
-
-        $("#form-comment").trigger("reset");
-      }
-    });
-
-    addLikeChechbox.click(function (e) {
-      if (addLikeChechbox.is(":checked")) {
-        $.post(`/add-like/${userID}`);
-        addLikeChechbox.removeAttr("checked");
-      } else {
-        $.post(`/remove-like/${userID}`);
-      }
-
-      getLikes("/get-likes");
-    });
-
-    $("#submit").click(function (e) {
-      e.preventDefault();
-
-      const name = escape($("#name").val());
-      const latitude = escape($("#latitude").val());
-      const longitude = escape($("#longitude").val());
-
-      $.post("/add-mark", {
-        name: name,
-        latitude: latitude,
-        longitude: longitude,
-      });
-
-      getMapData("/get-marks");
-
-      $("#form").trigger("reset");
-    });
+  $("#submit-mark").click(function (e) {
+    e.preventDefault();
+    addMark();
   });
 
   document.addEventListener("click", (e) => {
     if (e.target.matches(".delete-mark")) {
-      markers.forEach((marker) => {
-        map.removeLayer(marker);
-      });
-      const id = e.target.dataset.id;
-      getMapData(`/delete/${id}`);
+      deleteMark(e.target.dataset.id);
     }
   });
 
@@ -98,6 +45,70 @@
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(map);
+
+  function addComment() {
+    const content = $("#content").val();
+    const replyToID = document.querySelector("#form-comment").dataset.commentid;
+    console.log(replyToID);
+
+    if (content !== "") {
+      const userComment = document.querySelector('[data-commentuser="true"]');
+
+      if (userComment) {
+        showAlert($(".comments-fail-alert"));
+      } else {
+        $.ajax({
+          type: "POST",
+          url: `/add-comment/${userID}`,
+          data: {
+            content: content,
+            replyToComment: replyToID ? parseInt(replyToID) : null,
+          },
+          success: () => {
+            showAlert($(".comments-success-alert"));
+            getComments("/get-comments");
+          },
+          error: (err) => console.error(err),
+        });
+      }
+
+      $("#form-comment").trigger("reset");
+    }
+  }
+
+  function addRemoveLike() {
+    if (addLikeChechbox.is(":checked")) {
+      $.post(`/add-like/${userID}`);
+      addLikeChechbox.removeAttr("checked");
+    } else {
+      $.post(`/remove-like/${userID}`);
+    }
+
+    getLikes("/get-likes");
+  }
+
+  function addMark() {
+    const name = escape($("#name").val());
+    const latitude = escape($("#latitude").val());
+    const longitude = escape($("#longitude").val());
+
+    $.post("/add-mark", {
+      name: name,
+      latitude: latitude,
+      longitude: longitude,
+    });
+
+    getMapData("/get-marks");
+
+    $("#form").trigger("reset");
+  }
+
+  function deleteMark(id) {
+    markers.forEach((marker) => {
+      map.removeLayer(marker);
+    });
+    getMapData(`/delete/${id}`);
+  }
 
   function generateComments(data) {
     const commentsSection = document.querySelector("#comments");
@@ -140,7 +151,9 @@
       article.innerHTML = `
         <div class="border border-primary border-2 p-4 rounded mt-4">
           <div class="d-flex gap-3">
-            <h3 class="fs-5">${userName}${removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""}</h3>
+            <h3 class="fs-5">${userName}${
+        removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""
+      }</h3>
             <time>${date}</time>
             ${replyBtn}
             ${removeCommentBtn}
