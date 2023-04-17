@@ -89,7 +89,7 @@
 				Już dodałeś swój komentarz!
 			</p>
 
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-comment-form">
+			<button id="add-comment-noreply" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-comment-form">
 				Dodaj komentarz
 			</button>
 
@@ -106,12 +106,20 @@
 					</div>
 				</div>
 			</div>
+
+			{# <div class="modal fade" id="add-reply-comment-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div id="form-comment-container" class="modal-content" style="padding: 60px; z-index: 999">
+					</div>
+				</div>
+			</div> #}
 		{% endif %}
 
 		{% if is_granted('ROLE_ADMIN') %}
 			<div class="modal fade" id="add-mark-form" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content" style="padding: 60px; z-index: 999">
+						<div></div>
 						<form method="POST" id="form">
 							<label class="form-label" for="name">Nazwa</label>
 							<input class="form-control" type="text" name="name" id="name" required>

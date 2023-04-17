@@ -40,18 +40,23 @@ class CommentController extends AbstractController
     ): Response {
 
         if ($request->isXmlHttpRequest() && $request->isMethod('POST')) {
+            $em = $doctrine->getManager();
             $comment = new Comment();
             $currentDate = new \DateTime();
+
+            $replyToCommentID = $request->get('replyToComment');
+            $replyToComment = $em->getRepository(Comment::class)->find($replyToCommentID);
 
             $comment->setAuthor($user);
             $comment->setCreatedAt($currentDate);
             $comment->setContent($request->get('content'));
 
-            $em = $doctrine->getManager();
+            if ($replyToComment) {
+                $comment->setReplyToComment($replyToComment);
+            }
+
             $em->persist($comment);
             $em->flush();
-
-            
         }
         return new Response();
     }

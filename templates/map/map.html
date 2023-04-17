@@ -25,17 +25,23 @@
     $("#submit-comment").click(function (e) {
       e.preventDefault();
       const content = $("#content").val();
+      const replyToID = document.querySelector('#form-comment').dataset.commentid
+      console.log(replyToID);
 
       if (content !== "") {
-        const userComment = document.querySelector("#user-comment");
+        const userComment = document.querySelector('[data-commentuser="true"]');
 
         if (userComment) {
           showAlert($(".comments-fail-alert"));
         } else {
+
           $.ajax({
             type: "POST",
             url: `/add-comment/${userID}`,
-            data: { content: content },
+            data: {
+              content: content,
+              replyToComment: replyToID ? parseInt(replyToID) : null,
+            },
             success: () => {
               showAlert($(".comments-success-alert"));
               getComments("/get-comments");
@@ -111,12 +117,20 @@
         " | " +
         comment.createdAt.slice(11, 16);
       let removeCommentBtn = "";
-      let replyBtn = `<button id="reply-comment${comment.id}" class="ms-auto btn btn-primary">odpowiedz</button>`;
+      let replyBtn = `
+        <button id="reply-comment${comment.id}" data-commentid="${comment.id}"" data-bs-toggle="modal" data-bs-target="#add-comment-form" class="reply-comment-button ms-auto btn btn-primary">
+          odpowiedz
+        </button>
+      `;
+      let replyTo = comment.replyToComment?.author.userName;
+      let replyToID = comment.replyToComment?.id;
 
-      article.className = "border border-primary border-2 p-4 rounded mt-4";
+      article.className = `${replyTo ? "ms-auto w-75" : ""}`;
+      article.id = `comment${comment.id}`;
 
       if (userID == comment.author.id) {
-        article.id = "user-comment";
+        article.id = `comment${comment.id}`;
+        article.setAttribute("data-commentuser", true);
         replyBtn = "";
         userCommentID = comment.id;
         removeCommentBtn =
@@ -124,23 +138,46 @@
       }
 
       article.innerHTML = `
-        <div class="d-flex gap-3">
-          <h3 class="fs-5">${userName}${
+        <div class="border border-primary border-2 p-4 rounded mt-4">
+          <div class="d-flex gap-3">
+            <h3 class="fs-5">${userName}${
         removeCommentBtn ? ' <span class="bg-dark badge">TY</span>' : ""
       }</h3>
-          <time>${date}</time>
-          ${replyBtn}
-          ${removeCommentBtn}
+            <time>${date}</time>
+            ${replyBtn}
+            ${removeCommentBtn}
+          </div>
+          <p>${
+            replyTo ? `<a href="#comment${replyToID}">@${replyTo}</a> ` : ""
+          }${comment.content}</p>
         </div>
-        <p>${comment.content}</p>
+        <div class="comment-replies"></div>
       `;
-      commentsSection.append(article);
+      if (replyTo) {
+        const commentsReplies = document.querySelector(
+          `#comment${replyToID} > .comment-replies`
+        );
+        commentsReplies.append(article);
+      } else {
+        commentsSection.append(article);
+      }
     });
 
     $("#remove-comment").click(function () {
       $.post(`/remove-comment/${userCommentID}`);
       getComments("/get-comments");
     });
+
+    document
+      .querySelectorAll(".reply-comment-button")
+      .forEach((btn) => btn.addEventListener("click", (e) => {
+        $("#form-comment").attr("data-commentid", e.target.id.slice(13));
+      }));
+
+    document.querySelector("#add-comment-noreply")
+      .addEventListener('click', function() {
+      $("#form-comment").removeAttr("data-commentid")
+    })
   }
 
   function generateLikes(data) {
@@ -177,7 +214,7 @@
                       Usuń
                     </button>
                 </td>
-            {% endif %}                  
+            {% endif %}
       `;
       tableBody.append(tr);
     });
